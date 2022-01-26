@@ -1,34 +1,7 @@
 import { Box, Button, Text, TextField, Image } from '@skynexui/components'
+import React from 'react';
+import { useRouter } from 'next/router'
 import appConfig from '../config.json'
-
-function GlobalStyle() {
-    return (
-        <style global jsx>{`
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-          list-style: none;
-        }
-        body {
-          font-family: 'Open Sans', sans-serif;
-        }
-        /* App fit Height */ 
-        html, body, #__next {
-          min-height: 100vh;
-          display: flex;
-          flex: 1;
-        }
-        #__next {
-          flex: 1;
-        }
-        #__next > * {
-          flex: 1;
-        }
-        /* ./App fit Height */ 
-      `}</style>
-    );
-}
 
 function Title(props) {
     const Tag = props.tag || 'h1'
@@ -46,6 +19,9 @@ function Title(props) {
     )
 }
 
+
+
+
 // function HomePage() {
 //     return (
 //     <div>
@@ -60,11 +36,25 @@ function Title(props) {
 //export default HomePage
 
 export default function PaginaInicial() {
-    const username = 'braiancalot';
+    const [username, setUsername] = React.useState('braiancalot');
+    const [repositorios, setRepositorios] = React.useState('');
+    const roteamento = useRouter();
+    
+    const dadosAPI = fetch(`https://api.github.com/users/${username}`)
+        .then(function(resposta){
+            return resposta.json();
+        })
+        .then(function(respostaConvertida){
+            //console.log(respostaConvertida.public_repos)
+            setRepositorios(respostaConvertida.public_repos)
+            return respostaConvertida;
+        })
+    
+    
 
+    
     return (
         <>
-            <GlobalStyle />
             <Box
                 styleSheet={{
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -91,6 +81,16 @@ export default function PaginaInicial() {
                     {/* Formulário */}
                     <Box
                         as="form"
+                        onSubmit = {function (infoDoEvento){
+                            infoDoEvento.preventDefault();
+                            console.log('Clicou')
+                            // Opção padrao para troca de página
+                            //window.location.href = '/chat'
+                            // Opção Next
+                            roteamento.push('/chat')
+                            
+                        }}
+                        
                         styleSheet={{
                             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                             width: { xs: '100%', sm: '50%' }, textAlign: 'center', marginBottom: '32px',
@@ -101,7 +101,26 @@ export default function PaginaInicial() {
                             {appConfig.name}
                         </Text>
 
+                        {/* <input 
+                            type='text'
+                            value = {username}
+                            onChange={function (event){
+                                console.log(event.target.value)
+                                // Onde ta o valor?
+                                const valor = event.target.value
+                                // Trocar valor da variavel através do React
+                                setUsername(valor)
+                            }}
+                        /> */}
                         <TextField
+                            value = {username}
+                            onChange={function (event){
+                                console.log(event.target.value)
+                                // Onde ta o valor?
+                                const valor = event.target.value
+                                // Trocar valor da variavel através do React
+                                setUsername(valor)
+                            }}
                             fullWidth
                             textFieldColors={{
                                 neutral: {
@@ -143,13 +162,13 @@ export default function PaginaInicial() {
                             minHeight: '240px',
                         }}
                     >
-                        <Image
+                        {username.length > 1 && <Image
                             styleSheet={{
                                 borderRadius: '50%',
                                 marginBottom: '16px',
                             }}
                             src={`https://github.com/${username}.png`}
-                        />
+                        />}
                         <Text
                             variant="body4"
                             styleSheet={{
@@ -161,6 +180,20 @@ export default function PaginaInicial() {
                         >
                             {username}
                         </Text>
+                        
+                        <br/>
+
+                        {username.length > 1 && <Text
+                            variant="body4"
+                            styleSheet={{
+                                color: appConfig.theme.colors.neutrals[999],
+                                backgroundColor: appConfig.theme.colors.neutrals[700],
+                                padding: '3px 10px',
+                                borderRadius: '1000px'
+                            }}
+                        >
+                            Repositórios: {repositorios}
+                        </Text>}
                     </Box>
                     {/* Photo Area */}
                 </Box>
