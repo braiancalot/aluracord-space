@@ -9,7 +9,7 @@ export default function ChatPage() {
     function handleNovaMensagem(novaMensagem) {
         const mensagem = {
             id: listaDeMensagens.length + 1,
-            de: 'naaracrv',
+            de: 'braiancalot',
             texto: novaMensagem
         }
 
@@ -18,6 +18,13 @@ export default function ChatPage() {
             ...listaDeMensagens
         ])
         setMensagem('')
+
+    }
+
+    function handleDeletarMensagem(mensagem){
+        setListaDeMensagens(listaDeMensagens.filter(mensagemAtual => {
+            mensagemAtual.id != mensagem.id
+        }))
     }
 
     return (
@@ -57,7 +64,7 @@ export default function ChatPage() {
                         padding: '16px',
                     }}
                 >
-                    <MessageList mensagens={listaDeMensagens} />
+                    <MessageList mensagens={listaDeMensagens} handleDeletarMensagem={handleDeletarMensagem}/>
                     {/* {listaDeMensagens.map(mensagemAtual => {
                         return (
                             <li key={mensagemAtual.id}>
@@ -99,6 +106,26 @@ export default function ChatPage() {
                                 color: appConfig.theme.colors.neutrals['000'],
                             }}
                         />
+                        <Button
+                            size="lg"
+                            variant='primary'
+                            colorVariant='neutral'
+                            label='OK'
+                            buttonColors={{
+                                contrastColor: appConfig.theme.colors.neutrals['000'],
+                                mainColor: appConfig.theme.colors.primary['600'],
+                                mainColorLight: appConfig.theme.colors.primary[500],
+                                mainColorStrong: appConfig.theme.colors.primary['800'],
+                            }}
+                            styleSheet={{
+                                borderRadius:'20px',
+                                marginBottom: '8px'
+
+                            }}
+                            onClick={() => {
+                                handleNovaMensagem(mensagem);
+                            }}
+                        />
                     </Box>
                 </Box>
             </Box>
@@ -136,7 +163,7 @@ function MessageList(props) {
         <Box
             tag="ul"
             styleSheet={{
-                overflow: 'scroll',
+                overflow: 'auto',
                 display: 'flex',
                 flexDirection: 'column-reverse',
                 flex: 1,
@@ -186,6 +213,26 @@ function MessageList(props) {
                             >
                                 {(new Date().toLocaleDateString())}
                             </Text>
+                            <Button
+                                label='X'
+                                buttonColors={{
+                                    contrastColor: appConfig.theme.colors.neutrals['000'],
+                                    mainColor: 'transparent',
+                                    mainColorLight: appConfig.theme.colors.primary[600],
+                                    mainColorStrong: appConfig.theme.colors.primary['600'],
+                                }}
+                                styleSheet={{
+                                    borderRadius:'2px',
+                                    position: 'absolute',
+                                    right: '20px',
+                                    padding: '5px'
+    
+                                }}
+                                onClick={(event) => {
+                                    event.preventDefault();
+                                    props.handleDeletarMensagem(mensagem);
+                                }}
+                            />
                         </Box>
                         {mensagem.texto}
                     </Text>
