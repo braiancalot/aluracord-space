@@ -22,9 +22,10 @@ export default function ChatPage() {
     }
 
     function handleDeletarMensagem(id){
-        setListaDeMensagens(listaDeMensagens.filter(mensagemAtual => {
-            mensagemAtual.id !== id;
-        }))
+        const novaListaDeMensagens = listaDeMensagens.filter((mensagemAtual) => {
+            return mensagemAtual.id !== id;
+        })
+        setListaDeMensagens(novaListaDeMensagens)
     }
 
     return (
@@ -228,8 +229,9 @@ function MessageList(props) {
                                     padding: '5px'
     
                                 }}
-                                onClick={() => {
-                                    //event.preventDefault();
+                                onClick={event => {
+                                    console.log(mensagem)
+                                    event.preventDefault();
                                     props.handleDeletarMensagem(mensagem.id);
                                 }}
                             />

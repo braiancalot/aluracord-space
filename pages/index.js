@@ -40,12 +40,11 @@ export default function PaginaInicial() {
     const [repositorios, setRepositorios] = React.useState('');
     const roteamento = useRouter();
     
-    const dadosAPI = fetch(`https://api.github.com/users/${username}`)
+    fetch(`https://api.github.com/users/${username}`)
         .then(function(resposta){
             return resposta.json();
         })
         .then(function(respostaConvertida){
-            //console.log(respostaConvertida.public_repos)
             setRepositorios(respostaConvertida.public_repos)
             return respostaConvertida;
         })
@@ -67,7 +66,7 @@ export default function PaginaInicial() {
                     styleSheet={{
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'space-between',
+                        justifyContent: 'space-around',
                         flexDirection: {
                             xs: 'column',
                             sm: 'row',
