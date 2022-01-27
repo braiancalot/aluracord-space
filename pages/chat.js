@@ -23,7 +23,7 @@ export default function ChatPage() {
 
     function handleDeletarMensagem(mensagem){
         setListaDeMensagens(listaDeMensagens.filter(mensagemAtual => {
-            mensagemAtual.id != mensagem.id
+            mensagemAtual.id !== mensagem.id
         }))
     }
 
