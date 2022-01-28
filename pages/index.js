@@ -86,7 +86,7 @@ export default function PaginaInicial() {
                             // Opção padrao para troca de página
                             //window.location.href = '/chat'
                             // Opção Next
-                            roteamento.push('/chat')
+                            roteamento.push(`/chat?username=${username}`)
                             
                         }}
                         
