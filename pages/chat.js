@@ -1,31 +1,67 @@
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import React from 'react';
 import appConfig from '../config.json';
+import { createClient } from '@supabase/supabase-js'
+
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzI4OTg0NiwiZXhwIjoxOTU4ODY1ODQ2fQ.4qArdJHrNwFgvI1zgp1Y9aLMoO0P92L0qRwPqFQm9Eo'
+const SUPABASE_URL = 'https://fcafdbhrkfokbbcvivmn.supabase.co'
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
 export default function ChatPage() {
     const [mensagem, setMensagem] = React.useState('')
     const [listaDeMensagens, setListaDeMensagens] = React.useState([])
 
+    if(listaDeMensagens.length === 0){
+
+    }
+    
+    React.useEffect(() => {
+        supabaseClient
+            .from('mensagens')
+            .select('*')
+            .order('id', {ascending: false})
+            .then(({ data }) => {
+                console.log(data)
+                setListaDeMensagens(data);
+            });
+    }, []);
+    
+    
     function handleNovaMensagem(novaMensagem) {
         const mensagem = {
-            id: listaDeMensagens.length + 1,
+            //id: listaDeMensagens.length + 1,
             de: 'braiancalot',
             texto: novaMensagem
         }
 
-        setListaDeMensagens([
-            mensagem,
-            ...listaDeMensagens
-        ])
+        
+        supabaseClient
+            .from('mensagens')
+            .insert([
+                mensagem
+            ])
+            .then(({ data }) => {
+                setListaDeMensagens([
+                    data[0],
+                    ...listaDeMensagens
+                ])
+            })
         setMensagem('')
-
+        
     }
 
     function handleDeletarMensagem(id){
-        const novaListaDeMensagens = listaDeMensagens.filter((mensagemAtual) => {
-            return mensagemAtual.id !== id;
-        })
-        setListaDeMensagens(novaListaDeMensagens)
+        supabaseClient
+            .from('mensagens')
+            .delete()
+            .match({id:id})
+            .then(({data}) => {
+                const novaListaDeMensagens = listaDeMensagens.filter((mensagemAtual) => {
+                    return mensagemAtual.id !== data[0].id;
+                })
+                setListaDeMensagens(novaListaDeMensagens)
+            })
+
     }
 
     return (
@@ -124,7 +160,9 @@ export default function ChatPage() {
 
                             }}
                             onClick={() => {
-                                handleNovaMensagem(mensagem);
+                                if(mensagem.length > 0){
+                                    handleNovaMensagem(mensagem);
+                                }
                             }}
                         />
                     </Box>
@@ -198,6 +236,10 @@ function MessageList(props) {
                                     borderRadius: '50%',
                                     display: 'inline-block',
                                     marginRight: '8px',
+                                    hover: {
+                                        width:'60px',
+                                        height:'60px'
+                                    }
                                 }}
                                 src={`https://github.com/${mensagem.de}.png`}
                             />
@@ -225,7 +267,7 @@ function MessageList(props) {
                                 styleSheet={{
                                     borderRadius:'2px',
                                     position: 'absolute',
-                                    right: '20px',
+                                    right: '35px',
                                     padding: '5px'
     
                                 }}
